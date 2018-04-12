@@ -1,5 +1,5 @@
 {
-  "name": "kue-koa-middleware",
+  "name": "kue-ui-koa",
   "version": "0.8.0",
   "main": "index.js",
   "license": "MIT",

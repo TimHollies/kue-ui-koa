@@ -151,7 +151,7 @@ exports.inactive = id =>
  */
 
 exports.createJob = body =>
-  new Promise((res, rej) => {
+  new Promise(async (res, rej) => {
     if (lodash.isEmpty(body)) {
       res();
     }
@@ -160,7 +160,7 @@ exports.createJob = body =>
 
     async function _create(args, next) {
       if (!args.type) {
-        return { err: "Must provide job type", status: null, errCode: 400};
+        return { err: "Must provide job type", status: null, errCode: 400 };
       }
 
       var job = new Job(args.type, args.data || {});
@@ -177,30 +177,33 @@ exports.createJob = body =>
       return await new Promise((res, rej) => {
         job.save(function(err) {
           if (err) {
-            res({ err: err.message , status: null, errCode: 500});
+            res({ err: err.message, status: null, errCode: 500 });
           } else {
-            res({ err: null, status: { message: "job created", id: job.id }, errCode: null});
+            res({
+              err: null,
+              status: { message: "job created", id: job.id },
+              errCode: null
+            });
           }
         });
-      });      
+      });
     }
 
     var i = 0,
       len = body.length;
     var result = [];
 
-    for(const job of jobs) {
-      const { err, status, errCode}  = await _create(job);
-          
+    for (const job of jobs) {
+      const { err, status, errCode } = await _create(job);
+
       if (err) {
-        throw new { code: errCode, message: err};
+        rej({ code: errCode, message: err });
       }
 
-      result.push(status); 
+      result.push(status);
     }
 
-    return result;
-  
+    res(result);
   });
 
 /**
